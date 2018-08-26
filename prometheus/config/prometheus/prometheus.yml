@@ -1,0 +1,22 @@
+
+global:
+  scrape_interval:     15s 
+  evaluation_interval: 15s 
+  
+  external_labels:
+      monitor: 'messagebird-project'
+
+scrape_configs:
+  
+  - job_name: 'prometheus'
+    
+    scrape_interval: 5s
+   
+    static_configs:
+         - targets: ['0.0.0.0:9090']
+  - job_name: 'webapp'
+   
+    scrape_interval: 5s
+   
+    static_configs:
+        - targets: ['ELB:80']
