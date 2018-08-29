@@ -18,6 +18,6 @@ spec:
       containers:
         - image: frodood/webapp:v3
           imagePullPolicy: Always                         
-          name: sa-frontend
+          name: web-frontend
           ports:
             - containerPort: 80
