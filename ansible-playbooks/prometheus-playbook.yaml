@@ -1,0 +1,16 @@
+
+---
+- name: Install Mongo
+  hosts: utility-server
+  gather_facts: false
+  become: true
+  vars:
+    prometheus_link: https://github.com/prometheus/prometheus/releases/download/v1.6.2/prometheus-1.6.2.linux-amd64.tar.gz
+    prometheus_dir: /opt/prometheus
+    systemd_dir: /usr/lib/systemd/system
+    scrape: 5s
+    evaluation: 5s
+    elb: a8f6d417eb9cf11e8bb730a477d6d911-1344276750.us-east-1.elb.amazonaws.com
+  tasks:
+  - import_role:
+      name: prometheus

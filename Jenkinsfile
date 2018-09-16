@@ -9,6 +9,7 @@ pipeline {
     stage('Cloning Git') {
       steps {
         git 'https://github.com/frodood/web-app-k8s.git'
+
       }
     }
   stage('Building image') {
@@ -30,9 +31,10 @@ pipeline {
     stage('Integration'){
       steps{
         script{
-          sh 'kubectl apply -f deployment-manifests/'
+          sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/web-frontend-deployment.yaml'
+          sh 'kubectl apply -f deployment-manifests/ --namespace=integration'
           try{
-           //Gathering python app's external IP address
+           //Gathering ELB external IP address
            def ip = ''
            def count = 0
            def countLimit = 10
@@ -40,8 +42,8 @@ pipeline {
            //Waiting loop for IP address provisioning
            println("Waiting for IP address")
            while(ip=='' && count<countLimit) {
-            sleep 30
-            ip = sh script: "kubectl get svc -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
+            sleep 5
+            ip = sh script: "kubectl get svc --namespace=integration -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
             ip=ip.trim()
             count++
            }
@@ -50,13 +52,15 @@ pipeline {
       error("Not able to get the IP address. Aborting...")
          }
      else{
+       //waiting till instance become healthly in the ELB
+       sleep 120
                  //Executing tests
-                 sleep 120
+
       sh "chmod +x tests/integration_test.sh && ./tests/integration_test.sh ${ip}"
 
       //Cleaning the integration environment
       println("Cleaning integration environment...")
-      sh 'kubectl delete -f deployment-manifests'
+      sh 'kubectl delete -f deployment-manifests --namespace=integration'
           println("Integration stage finished.")
      }
 
@@ -64,12 +68,47 @@ pipeline {
      catch(Exception e) {
       println("Integration stage failed.")
        println("Cleaning integration environment...")
-       sh 'kubectl delete -f deployment-manifests'
+    //   sh 'kubectl delete -f deployment-manifests --namespace=integration'
            error("Exiting...")
           }
         }
       }
     }
+    stage('Production'){
+      steps{
+        script{
+          sleep 10
+          sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/web-frontend-deployment.yaml'
+          sh 'kubectl apply -f deployment-manifests/ --namespace=production'
 
+
+          //Gathering ELB app's external IP address
+             def ip = ''
+             def count = 0
+             def countLimit = 10
+
+             //Waiting loop for IP address provisioning
+             println("Waiting for IP address")
+             while(ip=='' && count<countLimit) {
+               sleep 5
+              ip = sh script: "kubectl get svc --namespace=production -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
+              ip = ip.trim()
+              count++
+         }
+
+       if(ip==''){
+        error("Not able to get the IP address. Aborting...")
+
+       }
+       else{
+         //waiting till instance become healthly in the ELB
+         sleep 120
+                   //Executing tests
+
+        sh "chmod +x tests/production_test.sh && ./tests/production_test.sh ${ip}"
+              }
+        }
+      }
+    }
   }
 }

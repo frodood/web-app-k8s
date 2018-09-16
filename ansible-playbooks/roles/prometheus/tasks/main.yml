@@ -1,0 +1,34 @@
+---
+# tasks file for prometheus
+- name: Create prometheus directory
+  file:
+    path: "{{ prometheus_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Get prometheus
+  unarchive:
+    src: "{{ prometheus_link }}"
+    dest: "{{ prometheus_dir }}"
+    remote_src: True
+    extra_opts: "--strip=1"
+
+- name: Copy prometheus config
+  template:
+    src: templates/prometheus.yml.j2
+    dest: "{{ prometheus_dir }}/prometheus.yml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart prometheus
+
+- name: Copy prometheus service file
+  template:
+    src: template/prometheus.service.j2
+    dest: "{{ systemd_dir }}/prometheus.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload daemons
