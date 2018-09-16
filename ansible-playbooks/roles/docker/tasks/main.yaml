@@ -12,7 +12,7 @@
 
 - name: Add Docker APT repository
   apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
 
 - name: Install Docker
   apt: name=docker-ce
