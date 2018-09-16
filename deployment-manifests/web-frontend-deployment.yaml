@@ -16,8 +16,8 @@ spec:
         app: web-frontend
     spec:
       containers:
-        - image: frodood/webapp:v3.1
-          imagePullPolicy: Always                         
+        - image: frodood/webapp:BUILD_ID
+          imagePullPolicy: Always
           name: web-frontend
           ports:
             - containerPort: 80
