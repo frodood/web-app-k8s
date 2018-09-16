@@ -12,7 +12,7 @@
 
 - name: Add kubectl APT repository
   apt_repository:
-    repo: deb [arch=amd64] deb http://apt.kubernetes.io/ kubernetes-xenial main
+    repo: deb [arch=amd64] http://apt.kubernetes.io/ kubernetes-xenial main
 
 - name: Install kubectl
   apt: name=kubectl
