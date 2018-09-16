@@ -26,7 +26,7 @@
 
 - name: Copy prometheus service file
   template:
-    src: template/prometheus.service.j2
+    src: templates/prometheus.service.j2
     dest: "{{ systemd_dir }}/prometheus.service"
     owner: root
     group: root
