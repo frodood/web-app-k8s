@@ -1,0 +1,3 @@
+---
+- name: Restart kubectl
+  service: name=kubectl state=restarted

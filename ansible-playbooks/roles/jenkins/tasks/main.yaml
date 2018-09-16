@@ -41,7 +41,12 @@
   changed_when: false
   register: result
 
+- name: Adding Jenkins user to Docker group
+  become: yes
+  shell: sudo usermod -aG docker jenkins
+  notify: "Restart Jenkins"
+
+
 - name: print init password jenkins
   debug:
     var: result.stdout
-  notify: "Restart Jenkins"

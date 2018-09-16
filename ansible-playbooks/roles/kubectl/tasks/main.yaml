@@ -1,0 +1,18 @@
+---
+- name: Install prerequisites
+  apt: name={{item}} update_cache=yes
+  with_items:
+   - apt-transport-https
+   - ca-certificates
+   - curl
+   - software-properties-common
+
+- name: Add kubectl GPG key
+  apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Add kubectl APT repository
+  apt_repository:
+    repo: deb [arch=amd64] deb http://apt.kubernetes.io/ kubernetes-xenial main
+
+- name: Install kubectl
+  apt: name=kubectl
