@@ -16,3 +16,18 @@
 
 - name: Install kubectl
   apt: name=kubectl
+
+- name: Set up kube directory
+  become: yes
+  become_user: root
+  file: path=/var/lib/jenkins/{{ item }}
+        state=directory
+  with_items:
+    - .kube
+
+- name: Copy kube Config
+  become: yes
+  become_user: root
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'templates/conf.j2', dest: '/var/lib/jenkins/.kube/config' }

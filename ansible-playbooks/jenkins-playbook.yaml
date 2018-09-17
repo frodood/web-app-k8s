@@ -3,6 +3,12 @@
   hosts: utility-server
   gather_facts: false
   become: true
+  vars:
+    certificate-authority-data: ""
+    cluster_name: ""
+    client-certificate-data: ""
+    client-key-data: ""
+    password: ""
 
   tasks:
   - import_role:
