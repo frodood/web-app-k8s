@@ -1,15 +1,23 @@
 ---
 - name: Installing Docker, kubectl, Jenkins
-  hosts: utility-server
+  hosts: app-server
   gather_facts: false
   become: true
-  vars:
-    certificate-authority-data: ""
-    cluster_name: ""
-    client-certificate-data: ""
-    client-key-data: ""
-    password: ""
-    username: ""
+
+  vars_prompt:
+    - name: certificate_authority_data
+      prompt: "Enter cert authority data"
+    - name: cluster_name
+      prompt: "Enter cluster name"
+    - name: client_certificate_data
+      prompt: "Enter client cert authority data"
+    - name: client_key_data
+      prompt: "Enter client key data"
+    - name: password
+      prompt: "Enter password"
+    - name: username
+      prompt: "Enter username"
+
 
   tasks:
   - import_role:

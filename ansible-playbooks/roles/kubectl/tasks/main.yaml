@@ -28,6 +28,6 @@
 - name: Copy kube Config
   become: yes
   become_user: root
-  copy: src={{ item.src }} dest={{ item.dest }}
+  template: src={{ item.src }} dest={{ item.dest }}
   with_items:
-    - { src: 'templates/conf.j2', dest: '/var/lib/jenkins/.kube/config' }
+    - { src: 'templates/config.j2', dest: '/var/lib/jenkins/.kube/config' }
