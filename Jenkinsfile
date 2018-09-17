@@ -49,7 +49,7 @@ pipeline {
            //Waiting loop for IP address provisioning
            println("Waiting for IP address")
            while(ip=='' && count<countLimit) {
-            sleep 10
+            sleep 15
             ip = sh script: "kubectl get svc --namespace=webapp-integration -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
             ip=ip.trim()
             count++
@@ -97,7 +97,7 @@ pipeline {
              //Waiting loop for IP address provisioning
              println("Waiting for IP address")
              while(ip=='' && count<countLimit) {
-               sleep 5
+               sleep 15
               ip = sh script: "kubectl get svc --namespace=webapp-production -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
               ip = ip.trim()
               count++
