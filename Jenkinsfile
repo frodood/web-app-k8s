@@ -28,11 +28,18 @@ pipeline {
         }
       }
     }
+    stage('Create Namespace'){
+      steps{
+        script{
+          sh 'kubectl apply -f namespace-manifests/'
+        }
+      }
+    }
     stage('Integration'){
       steps{
         script{
-          sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/web-frontend-deployment.yaml'
-          sh 'kubectl apply -f deployment-manifests/ --namespace=webapp-integration'
+          sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/integration/web-frontend-deployment.yaml'
+          sh 'kubectl apply -f deployment-manifests/integration --namespace=webapp-integration'
           try{
            //Gathering ELB external IP address
            def ip = ''
@@ -60,7 +67,7 @@ pipeline {
 
       //Cleaning the integration environment
       println("Cleaning integration environment...")
-      sh 'kubectl delete -f deployment-manifests --namespace=webapp-integration'
+      sh 'kubectl delete -f deployment-manifests/integration --namespace=webapp-integration'
           println("Integration stage finished.")
      }
 
@@ -68,7 +75,7 @@ pipeline {
      catch(Exception e) {
       println("Integration stage failed.")
        println("Cleaning integration environment...")
-    //   sh 'kubectl delete -f deployment-manifests --namespace=webapp-integration'
+    //   sh 'kubectl delete -f deployment-manifests/integration --namespace=webapp-integration'
            error("Exiting...")
           }
         }
@@ -78,8 +85,8 @@ pipeline {
       steps{
         script{
           sleep 10
-          sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/web-frontend-deployment.yaml'
-          sh 'kubectl apply -f deployment-manifests/ --namespace=webapp-roduction'
+          sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/production/web-frontend-deployment.yaml'
+          sh 'kubectl apply -f deployment-manifests/production --namespace=webapp-roduction'
 
 
           //Gathering ELB app's external IP address
@@ -91,7 +98,7 @@ pipeline {
              println("Waiting for IP address")
              while(ip=='' && count<countLimit) {
                sleep 5
-              ip = sh script: "kubectl get svc --namespace=production -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
+              ip = sh script: "kubectl get svc --namespace=webapp-roduction -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
               ip = ip.trim()
               count++
          }
