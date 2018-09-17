@@ -21,7 +21,7 @@ def get_simpson():
 @app.route('/covilha/')
 def get_time():
     format = "%Y-%m-%d %H:%M:%S %Z%z"
-    //get local time in covilha using time zone
+    #get local time in covilha using time zone
     now_utc = datetime.now(timezone('Europe/Lisbon'))
     return render_template('index.html', time=now_utc.strftime(format))
 
