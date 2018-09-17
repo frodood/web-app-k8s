@@ -50,7 +50,7 @@ pipeline {
            println("Waiting for IP address")
            while(ip=='' && count<countLimit) {
             sleep 10
-            ip = sh script: "kubectl get svc --namespace=web-integration -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
+            ip = sh script: "kubectl get svc --namespace=webapp-integration -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
             ip=ip.trim()
             count++
            }
@@ -86,7 +86,7 @@ pipeline {
         script{
           sleep 10
           sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/production/web-frontend-deployment.yaml'
-          sh 'kubectl apply -f deployment-manifests/production --namespace=webapp-roduction'
+          sh 'kubectl apply -f deployment-manifests/production --namespace=webapp-production'
 
 
           //Gathering ELB app's external IP address
@@ -98,7 +98,7 @@ pipeline {
              println("Waiting for IP address")
              while(ip=='' && count<countLimit) {
                sleep 5
-              ip = sh script: "kubectl get svc --namespace=webapp-roduction -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
+              ip = sh script: "kubectl get svc --namespace=webapp-production -o jsonpath='{.items[*].status.loadBalancer.ingress[*].hostname}'", returnStdout: true
               ip = ip.trim()
               count++
          }
