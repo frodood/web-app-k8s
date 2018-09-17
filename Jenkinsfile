@@ -32,7 +32,7 @@ pipeline {
       steps{
         script{
           sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/web-frontend-deployment.yaml'
-          sh 'kubectl apply -f deployment-manifests/ --namespace=integration'
+          sh 'kubectl apply -f deployment-manifests/ --namespace=webapp-integration'
           try{
            //Gathering ELB external IP address
            def ip = ''
@@ -60,7 +60,7 @@ pipeline {
 
       //Cleaning the integration environment
       println("Cleaning integration environment...")
-      sh 'kubectl delete -f deployment-manifests --namespace=integration'
+      sh 'kubectl delete -f deployment-manifests --namespace=webapp-integration'
           println("Integration stage finished.")
      }
 
@@ -68,7 +68,7 @@ pipeline {
      catch(Exception e) {
       println("Integration stage failed.")
        println("Cleaning integration environment...")
-    //   sh 'kubectl delete -f deployment-manifests --namespace=integration'
+    //   sh 'kubectl delete -f deployment-manifests --namespace=webapp-integration'
            error("Exiting...")
           }
         }
@@ -79,7 +79,7 @@ pipeline {
         script{
           sleep 10
           sh 'sed -i s,BUILD_ID,${BUILD_NUMBER},g deployment-manifests/web-frontend-deployment.yaml'
-          sh 'kubectl apply -f deployment-manifests/ --namespace=production'
+          sh 'kubectl apply -f deployment-manifests/ --namespace=webapp-roduction'
 
 
           //Gathering ELB app's external IP address

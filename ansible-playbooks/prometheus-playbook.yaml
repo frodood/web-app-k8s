@@ -1,6 +1,6 @@
 
 ---
-- name: Install Mongo
+- name: Install Prometheus
   hosts: utility-server
   gather_facts: false
   become: true

@@ -43,7 +43,8 @@
 
 - name: Adding Jenkins user to Docker group
   become: yes
-  shell: sudo usermod -aG docker jenkins
+  become_user: root
+  shell: usermod -aG docker jenkins
   notify: "Restart Jenkins"
 
 

@@ -1,5 +1,5 @@
 ---
-- name: Install Jenkins
+- name: Installing Docker, kubectl, Jenkins
   hosts: utility-server
   gather_facts: false
   become: true
@@ -7,5 +7,7 @@
   tasks:
   - import_role:
       name: docker
+  - import_role:
       name: kubectl
+  - import_role:
       name: jenkins
