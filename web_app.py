@@ -1,5 +1,7 @@
 from flask import Flask, Response, send_from_directory, send_file, render_template
 from scrapper import setup_metrics
+from datetime import datetime
+from pytz import timezone
 import prometheus_client
 import requests
 import json, ast
@@ -18,18 +20,11 @@ def get_simpson():
 
 @app.route('/covilha/')
 def get_time():
-    headers = {'Content-type': 'application/json'}
-    url = 'http://api.worldweatheronline.com/premium/v1/tz.ashx?key=895d2154a29b4830b2693625182408&q=covilha&format=json'
-    response = requests.get(url, headers=headers)
-    if (response.ok):
-        jdata = ast.literal_eval(json.dumps(json.loads(response.content)))
-        print(jdata)
-        city = jdata['data']['request'][0]['query']
-        localtime = jdata['data']['time_zone'][0]['localtime']
-        return render_template('index.html', time=str(localtime))
+    format = "%Y-%m-%d %H:%M:%S %Z%z"
 
-    else:
-        response.raise_for_status()
+    now_utc = datetime.now(timezone('Europe/Lisbon'))
+    return render_template('index.html', time=now_utc.strftime(format))
+
 
 @app.route('/metrics')
 def metrics():
