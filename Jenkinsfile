@@ -75,7 +75,7 @@ pipeline {
      catch(Exception e) {
       println("Integration stage failed.")
        println("Cleaning integration environment...")
-    //   sh 'kubectl delete -f deployment-manifests/integration --namespace=webapp-integration'
+       sh 'kubectl delete -f deployment-manifests/integration --namespace=webapp-integration'
            error("Exiting...")
           }
         }
