@@ -1,7 +1,7 @@
 
 ---
 - name: Install Prometheus
-  hosts: utility-server
+  hosts: app-server
   gather_facts: false
   become: true
   vars:
@@ -10,7 +10,10 @@
     systemd_dir: /lib/systemd/system
     scrape: 5s
     evaluation: 5s
-    elb: a8f6d417eb9cf11e8bb730a477d6d911-1344276750.us-east-1.elb.amazonaws.com
+  vars_prompt:
+    - name: elb
+      prompt: "Enter ELB DNS"
+  
   tasks:
   - import_role:
       name: prometheus
